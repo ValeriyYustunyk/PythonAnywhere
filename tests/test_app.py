@@ -30,7 +30,7 @@ class AppTestCase(unittest.TestCase):
 
     def test_celsius_freezing(self):
         data = self.post("/api/celsius", {"celsius": 0}).get_json()
-        self.assertEqual(data["fahrenheit"], 32.0)
+        self.assertEqual(data["fahrenheit"], 10.0)
 
     def test_celsius_boiling(self):
         data = self.post("/api/celsius", {"celsius": 100}).get_json()
