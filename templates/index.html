@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mini Apps</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f2f5;
+      color: #333;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: #1a1a2e;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      align-items: stretch;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.75rem;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      border-top: 5px solid var(--accent);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .card .spacer { flex: 1; }
+
+    .card button { margin-top: auto; }
+
+    .card h2 {
+      font-size: 1.2rem;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    .card label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      color: #555;
+    }
+
+    .card input[type="number"],
+    .card select {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+      transition: border-color 0.2s;
+    }
+
+    .card input[type="number"]:focus,
+    .card select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .toppings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.3rem 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .toppings-grid label {
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.65rem;
+      border: none;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    button:hover { opacity: 0.88; }
+
+    .result {
+      background: #f7f8fc;
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      font-size: 0.95rem;
+      min-height: 3rem;
+      color: #222;
+      display: none;
+    }
+
+    .result.show { display: block; }
+
+    .surplus { color: #1a8f4a; font-weight: 700; }
+    .deficit { color: #c0392b; font-weight: 700; }
+
+    /* Accent colours per card */
+    .card-temp  { --accent: #e67e22; }
+    .card-budget{ --accent: #27ae60; }
+    .card-pizza { --accent: #e74c3c; }
+    .card-fare  { --accent: #2980b9; }
+  </style>
+</head>
+<body>
+
+<h1>Mini Apps</h1>
+
+<div class="grid">
+
+  <!-- ========== 1. Celsius → Fahrenheit ========== -->
+  <div class="card card-temp">
+    <h2>🌡️ Celsius → Fahrenheit</h2>
+
+    <div>
+      <label for="celsius">Temperature (°C)</label>
+      <input type="number" id="celsius" placeholder="e.g. 100" step="any" />
+    </div>
+
+    <div class="spacer"></div>
+    <button onclick="convertTemp()">Convert</button>
+    <div class="result" id="temp-result"></div>
+  </div>
+
+  <!-- ========== 2. Budget Helper ========== -->
+  <div class="card card-budget">
+    <h2>💰 Budget Helper</h2>
+
+    <div>
+      <label for="income">Monthly Income ($)</label>
+      <input type="number" id="income" placeholder="e.g. 3000" min="0" step="any" />
+    </div>
+    <div>
+      <label>Expenses ($) — one per field</label>
+      <input type="number" class="expense" placeholder="Rent" min="0" step="any" />
+      <input type="number" class="expense" placeholder="Food" min="0" step="any" />
+      <input type="number" class="expense" placeholder="Transport" min="0" step="any" />
+      <input type="number" class="expense" placeholder="Other" min="0" step="any" />
+    </div>
+
+    <div class="spacer"></div>
+    <button onclick="calcBudget()">Calculate</button>
+    <div class="result" id="budget-result"></div>
+  </div>
+
+  <!-- ========== 3. Pizza Order ========== -->
+  <div class="card card-pizza">
+    <h2>🍕 Pizza Order</h2>
+
+    <div>
+      <label for="pizza-size">Size</label>
+      <select id="pizza-size">
+        <option value="small">Small — $8.99</option>
+        <option value="medium" selected>Medium — $11.99</option>
+        <option value="large">Large — $14.99</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Toppings (+$1.50 each)</label>
+      <div class="toppings-grid">
+        <label><input type="checkbox" value="Pepperoni" /> Pepperoni</label>
+        <label><input type="checkbox" value="Mushrooms" /> Mushrooms</label>
+        <label><input type="checkbox" value="Olives" /> Olives</label>
+        <label><input type="checkbox" value="Onions" /> Onions</label>
+        <label><input type="checkbox" value="Bell Peppers" /> Bell Peppers</label>
+        <label><input type="checkbox" value="Extra Cheese" /> Extra Cheese</label>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <button onclick="orderPizza()">Place Order</button>
+    <div class="result" id="pizza-result"></div>
+  </div>
+
+  <!-- ========== 4. Ride Fare Guesser ========== -->
+  <div class="card card-fare">
+    <h2>🚖 Ride Fare Guesser</h2>
+
+    <div>
+      <label for="distance">Distance (miles)</label>
+      <input type="number" id="distance" placeholder="e.g. 5" min="0" step="any" />
+    </div>
+    <div>
+      <label for="minutes">Estimated time (minutes)</label>
+      <input type="number" id="minutes" placeholder="e.g. 15" min="0" step="any" />
+    </div>
+    <small style="color:#777; font-size:0.8rem;">Base $2.50 · $1.75/mile · $0.25/min</small>
+
+    <div class="spacer"></div>
+    <button onclick="guessFare()">Estimate Fare</button>
+    <div class="result" id="fare-result"></div>
+  </div>
+
+</div>
+
+<script>
+  async function post(url, body) {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    return res.json();
+  }
+
+  function show(id, html) {
+    const el = document.getElementById(id);
+    el.innerHTML = html;
+    el.classList.add('show');
+  }
+
+  // 1. Temp converter
+  async function convertTemp() {
+    const c = document.getElementById('celsius').value;
+    if (c === '') return show('temp-result', 'Please enter a temperature.');
+    const data = await post('/api/celsius', { celsius: c });
+    show('temp-result', `<strong>${c} °C</strong> = <strong>${data.fahrenheit} °F</strong>`);
+  }
+
+  // 2. Budget helper
+  async function calcBudget() {
+    const income = document.getElementById('income').value;
+    if (income === '') return show('budget-result', 'Please enter your income.');
+    const expenses = [...document.querySelectorAll('.expense')].map(i => i.value || '0');
+    const data = await post('/api/budget', { income, expenses });
+    const cls = data.status === 'surplus' ? 'surplus' : 'deficit';
+    show('budget-result',
+      `Total expenses: <strong>$${data.total_expenses}</strong><br>` +
+      `Remaining: <span class="${cls}">$${Math.abs(data.remaining)} ${data.status}</span>`
+    );
+  }
+
+  // 3. Pizza order
+  async function orderPizza() {
+    const size = document.getElementById('pizza-size').value;
+    const toppings = [...document.querySelectorAll('.toppings-grid input:checked')].map(i => i.value);
+    const data = await post('/api/pizza', { size, toppings });
+    const toppingList = toppings.length ? toppings.join(', ') : 'no toppings';
+    show('pizza-result',
+      `<strong>${data.size.charAt(0).toUpperCase() + data.size.slice(1)} pizza</strong><br>` +
+      `Toppings: ${toppingList}<br>` +
+      `Base: $${data.base_price} · Total: <strong>$${data.total}</strong>`
+    );
+  }
+
+  // 4. Ride fare
+  async function guessFare() {
+    const distance = document.getElementById('distance').value;
+    const minutes = document.getElementById('minutes').value;
+    if (!distance || !minutes) return show('fare-result', 'Please enter distance and time.');
+    const data = await post('/api/fare', { distance, minutes });
+    show('fare-result', `Estimated fare: <strong>$${data.fare}</strong>`);
+  }
+</script>
+
+</body>
+</html>
