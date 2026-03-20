@@ -99,10 +99,17 @@ def gitpull():
     # --- Pull repo ---
     try:
         repo_path = '/home/yvalerii/PythonAnywhere'
-        subprocess.run(['git', '-C', repo_path, 'pull'], check=True)
-        return '✅ Code updated via git pull.', 200
+        result = subprocess.run(
+            ['git', '-C', repo_path, 'pull'],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        return f'✅ Code updated via git pull.\n{result.stdout}', 200
     except subprocess.CalledProcessError as e:
-        return f'❌ Git pull failed: {e}', 500
+        return f'❌ Git pull failed:\nstdout: {e.stdout}\nstderr: {e.stderr}', 500
+    except Exception as e:
+        return f'❌ Unexpected error: {type(e).__name__}: {e}', 500
 
 
 if __name__ == "__main__":
