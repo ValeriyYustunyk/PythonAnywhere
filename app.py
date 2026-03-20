@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, abort
+from flask import Flask, render_template, jsonify, request, abort
 import subprocess
 import hmac
 import hashlib
